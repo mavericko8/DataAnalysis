@@ -1,0 +1,309 @@
+/* query 1 */
+create database Inventory;
+
+/* query 2 */
+create table tblsalesman
+(salesman_id int not null primary key,
+ Name varchar(20) not null,
+ city varchar(20),
+ commission float not null );
+
+ insert into tblsalesman values(5001,'James Hoog','New York',0.15);
+ insert into tblsalesman values(5002,'Nail Knite','Paris',0.13);
+ insert into tblsalesman values(5005,'Pit Alex','London',0.11);
+ insert into tblsalesman values(5006,'Mc Lyon','Paris',0.14);
+ insert into tblsalesman values(5003,'Lauson Hen','',0.12);
+ insert into tblsalesman values(5007,'Paul Adam','Rome',0.13);
+
+ 
+/* query 4 */
+create table tblcustomer(
+customer_id int not null primary key,
+cust_name varchar(20) not null,
+city varchar(20) not null,
+grade int,
+salesman_id int foreign key references tblsalesman(salesman_id));
+
+insert into tblcustomer values (3002,'Nick Rimando','New York',100,5001);
+insert into tblcustomer values (3005,'Graham Zusi','California',200,5002);
+insert into tblcustomer values (3001,'Brad Guzan','London',null,5005);
+insert into tblcustomer values (3004,'Fabian Johns','Paris',300,5006);
+insert into tblcustomer values (3007,'Brad Davis','New York',200,5001);
+insert into tblcustomer values (3009,'Geoff Camero','Berlin',100,5003);
+insert into tblcustomer values (3008,'Julian Green','London',300,5002);
+insert into tblcustomer values (3003,'Jozy Altidor','Moscow',200,5007);
+
+
+/* query 3 */
+create table tblorders(
+order_no int not null primary key,
+purch_amt float not null,
+ord_date date not null,
+customer_id int foreign key references tblcustomer(customer_id),
+salesman_id int foreign key references tblsalesman(salesman_id));
+
+insert into tblorders values (70001,150.5,'10/05/12',3005,5002);
+insert into tblorders values (70009,270.65,'9/10/12',3001,5005);
+insert into tblorders values (70002,65.26,'10/05/12',3002,5001);
+insert into tblorders values (70004,110.5,'8/17/12',3009,5003);
+insert into tblorders values (70007,948.5,'9/10/12',3005,5002);
+insert into tblorders values (70005,2400.6,'7/27/12',3007,5001);
+insert into tblorders values (70008,5760,'9/10/12',3002,5001);
+insert into tblorders values (70010,1983.43,'10/10/12',3004,5006);
+insert into tblorders values (70003,2480.4,'10/10/12',3009,5003);
+insert into tblorders values (70012,250.45,'6/27/12',3008,5002);
+insert into tblorders values (70011,75.29,'8/17/12',3003,5007);
+insert into tblorders values (70013,3045.6,'4/25/12',3002,5001);
+
+
+/* query 5 */
+alter table tblcustomer add country varchar(20);
+
+
+/* query 6 */
+
+update tblcustomer set country='USA'
+where customer_id = 3002 or customer_id = 3007 or customer_id = 3005;
+
+update tblcustomer set country='UK'
+where city = 'London';
+
+update tblcustomer set country='Russia'
+where city = 'Moscow';
+
+update tblcustomer set country='Germany'
+where city = 'Berlin';
+
+update tblcustomer set country='France'
+where city = 'Paris';
+
+/* query 7 */
+ select * from tblsalesman;
+
+/* query 8 */
+select name,commission from tblsalesman;
+
+/* query 9 */
+select * from tblcustomer where country='USA';
+
+/* query 10 */
+select * from tblcustomer where grade=200;
+
+/* query 11 */
+select * from tblsalesman where commission > 0.12;
+
+/* query 12 */
+select * from tblorders where purch_amt < 2000;
+
+/* query 13 */
+alter table tblcustomer drop column country;
+
+-- query 14
+select s.Name, c.cust_name, c.city from tblsalesman s
+join tblcustomer c
+on s.city = c.city;
+
+--query 15
+select o.order_no, o.purch_amt, c.cust_name, c.city from tblcustomer c
+join tblorders o
+on o.customer_id = c.customer_id
+where o.purch_amt between 500 and 2000;
+
+--query 16
+select c.cust_name, s.Name from tblsalesman s
+join tblcustomer c
+on s.salesman_id = c.salesman_id;
+
+--query 17
+select * from tblcustomer c 
+left join tblsalesman s
+on s.salesman_id = c.salesman_id
+where s.commission > 0.12;
+
+--query 18
+select o.order_no,c.cust_name,s.Name,c.grade from tblorders o
+join tblcustomer c
+on c.customer_id = o.customer_id
+join tblsalesman s
+on c.salesman_id = s.salesman_id
+where c.grade < 300
+order by c.grade ASC;
+ 
+ --OPERATORS
+ --query 19
+ select * from tblcustomer
+ where grade > 100;
+
+ --query 20
+  select * from tblcustomer
+ where grade > 100 and city = 'New York';
+
+ --query 21
+ select * from tblcustomer
+ where grade > 100 or city = 'New York';
+
+ --query 22
+ select * from tblorders
+ where (ord_date != '2012-09-10' and salesman_id <= 5005) or purch_amt <= 1000.00;
+
+ --query 23
+ select * from tblorders
+ where ord_date = '2012-08-17' or customer_id > 3005 and purch_amt < 1000.00;
+
+ --AGGREGATE
+ --query 24
+ select sum(purch_amt) Totalamount from tblorders;
+
+ --query 25
+ select AVG(purch_amt) AvgAmnt from tblorders;
+
+ --query 26
+ select count(salesman_id) NumOfSalesman from tblcustomer;
+
+ --query 27
+ select count(cust_name) NumOfCustNames from tblcustomer;
+
+ --query 28
+ select MAX(purch_amt) MaxAmnt from tblorders;
+
+ --query 29
+ select MIN(purch_amt) MixAmnt from tblorders;
+
+ --Nested Query
+ --query 30
+ select customer_id,purch_amt from tblorders
+ where purch_amt= (select MAX(purch_amt) MaxAmnt from tblorders);
+
+ --query 31
+ select customer_id,ord_date,purch_amt from tblorders
+ where  purch_amt in
+  (select MAX(purch_amt) from tblorders
+   where purch_amt between 2000 and 6000 
+   group by ord_date);
+
+--query 32
+select salesman_id,ord_date,count(order_no) NumOfOrdr from tblorders
+group by ord_date,salesman_id;
+
+--query 33
+select order_no from tblorders
+order by order_no ASC;
+
+--qery 34
+select order_no from tblorders
+order by ord_date desc;
+
+--query 35
+select * from tblorders
+order by ord_date ASC, purch_amt DESC;
+
+--VIEW
+--query 36
+create view vwcustinfo As
+select c.*,s.Name,s.commission,o.order_no,o.ord_date, o.purch_amt from  tblsalesman s
+join  tblcustomer c
+on c.salesman_id = s.salesman_id
+join tblorders o
+on o.customer_id = c.customer_id;
+
+--Stored procedures
+--query 37
+create procedure spordcustinfo As
+select * from tblorders o
+join tblcustomer c
+on o.customer_id = c.customer_id;
+
+exec spordcustinfo;
+
+--query 38
+
+create procedure SpCustSalesInfo 
+	@cust_Id INT
+As
+select c.*,s.Name,s.city,s.commission from tblcustomer c
+	join tblsalesman s
+	on c.salesman_id = s.salesman_id
+	where c.customer_id = @cust_Id;
+
+exec SpCustSalesInfo @cust_Id = 3002
+
+--query 39
+create procedure SpCustInfo
+As
+select * from tblcustomer;
+
+exec SpCustInfo;
+
+--query 40
+create procedure SpSalesInfo
+@sales_Id int
+As
+select * from tblsalesman
+where salesman_id = @sales_Id;
+
+exec SpSalesInfo @sales_Id = 5005;
+
+--query 41 update table using stored procedures
+create procedure SpUpdateCity_custtable
+@city varchar(10), @Cust_id int
+As
+update tblcustomer set city = @city
+where customer_id = @Cust_id;
+
+exec SpUpdateCity_custtable @city = 'Waterloo', @Cust_id = 3003;
+
+--Date Function
+--query 42
+select distinct year(ord_date) years
+ from tblorders;
+
+ --query 43
+ select order_no,purch_amt, format(ord_date,'dd-MM-yyyy') order_date,
+ customer_id, salesman_id
+ from tblorders;
+
+ --query 44
+ select * from tblorders 
+ where MONTH(ord_date)= 01;
+
+ --query 45
+  select * from tblorders 
+ where DAY(ord_date) between 15 and 30;
+
+
+--function 1
+create function orderamount (@cust_id int)
+returns float
+as
+begin
+return (select sum(purch_amt) from tblorders
+			where customer_id= @cust_id);
+end;
+
+--function 2
+create function salescommision (@sales_id int)
+returns float
+as
+begin
+return (select commission from tblsalesman
+			where salesman_id= @sales_id);
+end;
+
+--function 3
+create function  custmrname(@orderno int)
+returns table
+as
+return
+(select c.* from tblcustomer c
+join tblorders o
+on c.customer_id = o.customer_id
+where order_no = @orderno);
+
+ --function call
+
+ select dbo.orderamount(3002) purchaseamount
+ select customer_id as ID, cust_name as NAME, dbo.orderamount(customer_id) as TotalAmountOrderd from tblcustomer;
+
+select dbo.salescommision(5002) commision
+
+select * from custmrname(70001);
